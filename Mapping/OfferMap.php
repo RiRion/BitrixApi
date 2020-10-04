@@ -15,7 +15,7 @@
             $offer->XmlId = $arrFields["EXTERNAL_ID"];
 
             $offer->Barcode = $arrProperties["barcode"]["VALUE"];
-            $offer->ProductId = $arrProperties["CML2_LINK"]["VALUE"]; // != null ? $arrProperties["CML2_LINK"]["VALUE"] : "0";
+            $offer->ProductId = $arrProperties["CML2_LINK"]["VALUE"] != null ? $arrProperties["CML2_LINK"]["VALUE"] : "0";
             $offer->ShippingDate = $arrProperties["shippingdate"]["VALUE"];
             $offer->Color = $arrProperties["COLOR"]["VALUE"];
             $offer->Size = $arrProperties["SIZE"]["VALUE"];

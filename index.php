@@ -1,7 +1,7 @@
 <?php
 //Errors output. Debug.
-error_reporting(-1);
-ini_set('display_errors', 1);
+//error_reporting(-1);
+//ini_set('display_errors', 1);
 //end errors output.//
 
 use Slim\Exception\NotFoundException;
@@ -62,17 +62,17 @@ $app->get("/GetCategories", function (Request $request, Response $response, $arg
 
 //Adds products to the database.
 $app->post("/AddProductsRange", function (Request $request, Response $response, $args){
-    postAndPutObject($request, $response, ProductService::addProductsRange());
+    getPostWithoutResponse($request, $response, ProductService::addProductsRange());
     return $response;
 });
 
 $app->post("/UpdateProductsRange", function (Request $request, Response $response, $args){
-    postAndPutObject($request, $response, ProductService::updateProductsRange());
+    getPostWithoutResponse($request, $response, ProductService::updateProductsRange());
     return $response;
 });
 
 $app->post("/DeleteProductsRange", function (Request $request, Response $response, $args){
-   postAndPutObject($request, $response, ProductService::deleteProductsRange());
+   getPostWithoutResponse($request, $response, ProductService::deleteProductsRange());
    return $response;
 });
 
