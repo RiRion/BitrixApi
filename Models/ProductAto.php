@@ -16,7 +16,7 @@
         public $Length = "";
         public $Diameter = "";
         public $Collection = "";
-        public $Category; //class Categories
+        public $CategoryId;
         public $Bestseller = "";
         public $New = "";
         public $Function = "";

@@ -20,7 +20,7 @@ class ProductMap
         $prod->Material = $arProperties["material"]["VALUE"];
         $prod->Length = $arProperties["lenght"]["VALUE"];
         $prod->Diameter = $arProperties["diameter"]["VALUE"];
-        $prod->Category = $arFields["IBLOCK_SECTION_ID"];
+        $prod->CategoryId = $arFields["IBLOCK_SECTION_ID"];
         $prod->Function = $arProperties["function"]["VALUE"];
         $prod->AddFunction = $arProperties["addfunction"]["VALUE"];
         $prod->Vibration = $arProperties["vibration"]["VALUE"];
@@ -42,7 +42,7 @@ class ProductMap
             "XML_ID" => $product->ProductId,
             "IBLOCK_ID" =>  "17",//$product->BlockId,
             "CODE" => self::getCode($product->Name),
-            "IBLOCK_SECTION_ID" => $product->Category,
+            "IBLOCK_SECTION_ID" => $product->CategoryId,
             "NAME" => $product->Name,
             "DETAIL_PICTURE" => CFile::MakeFileArray($arrImages["Img1"]),
             "DETAIL_TEXT" => $product->Description,
