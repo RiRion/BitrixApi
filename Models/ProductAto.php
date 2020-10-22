@@ -1,8 +1,5 @@
 <?
 
-    include_once "Models/Images.php";
-    include_once "Models/Categories.php";
-
     class ProductAto {
         public $ProductId = "";
         public $VendorId = "";
@@ -35,4 +32,3 @@
             $this->ImagesURL = new Images();
         }
     }
-?>

@@ -1,4 +1,6 @@
 <?
+
+
 class OfferAto{
     public $Id = ""; // offer ID
     public $ProductId = ""; // prodid -> CML2_LINK (Property)
@@ -17,4 +19,3 @@ class OfferAto{
     public $SuperSale = ""; // SuperSale -> SuperSale
     public $StopPromo = ""; // StopPromo -> StopPromo
 }
-?>

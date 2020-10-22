@@ -1,13 +1,10 @@
 <?
 
-include_once "Mapping/ProductMap.php";
-include_once "Models/ProductAto.php";
-
 /**
  * Class ProductService
  */
 class ProductService{
-    public static function getAllProducts()
+    public static function GetAllProducts()
     {
         $arrProducts = array();
         $arFilter = Array("IBLOCK_ID"=>17);
@@ -19,7 +16,7 @@ class ProductService{
         return json_encode($arrProducts, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function getProductIdWithIeId(){
+    public static function GetProductIdWithIeId(){
         $arFilter = Array("IBLOCK_ID"=>17);
         $res = CIBlockElement::GetList(Array(), $arFilter, false, false, Array());
         $arrResult = array();
@@ -31,7 +28,7 @@ class ProductService{
         return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function getCategories(){
+    public static function GetCategories(){
         $arrResult = array();
         $groupList = CIBlockSection::GetList(array("SORT"=>"ASC"), array("ID", "IBLOCK_ID" => 17),
             false, array("ID","IBLOCK_ID","IBLOCK_SECTION_ID","NAME"));
@@ -45,7 +42,7 @@ class ProductService{
         return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function addProductsRange()
+    public static function AddProductsRange()
     {
         set_time_limit(120);
 //        https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php - CIBlockElement::Add
@@ -56,9 +53,7 @@ class ProductService{
         $el = new CIBlockElement();
         foreach ($arNewProducts as $item) {
             $elementForImport = ProductMap::MapFromProductToBitrixElement($item);
-            print_r($elementForImport);
             if ($id = $el->Add($elementForImport, false, true, false)) {
-                print_r($id);
                 $arrId[] = $id;
             }
             else $arrIdImportFalse[] = $item->ProductId;
@@ -74,7 +69,7 @@ class ProductService{
         return json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function updateProductsRange()
+    public static function UpdateProductsRange()
     {
         set_time_limit(120);
         $productsToUpdate = json_decode(file_get_contents('php://input'));
@@ -96,7 +91,7 @@ class ProductService{
         return json_encode($response, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function deleteProductsRange()
+    public static function DeleteProductsRange()
     {
         set_time_limit(120);
         $request = file_get_contents('php://input');
@@ -122,7 +117,3 @@ class ProductService{
         return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
     }
 }
-?>
-<?
-    // require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");
-?>

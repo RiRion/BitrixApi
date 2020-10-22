@@ -1,7 +1,5 @@
 <?
 
-include_once "my_tools/Models/Product.php";
-
 class ProductMap
 {
     public static function MapFromBitrixElementToProduct($bitrixElement){

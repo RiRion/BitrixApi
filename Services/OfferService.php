@@ -2,14 +2,11 @@
 use \Bitrix\Catalog\Model\Product as ClassProduct;
 use \Bitrix\Catalog\Model\Price as ClassPrice;
 
-include_once "Mapping/OfferMap.php";
-include_once "Models/OfferAto.php";
-
 /**
  * Class OfferService
  */
 class OfferService{
-    public static function getAllOffers(){
+    public static function GetAllOffers(){
         set_time_limit(120);
         $arrOffers = array();
         $arrFilter = array("IBLOCK_ID" => 22);
@@ -22,7 +19,7 @@ class OfferService{
         return json_encode($arrOffers, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function addOffersRange(){
+    public static function AddOffersRange(){
         set_time_limit(120);
         $listToUpdate = json_decode(file_get_contents('php://input'));
         $el = new CIBlockElement();
@@ -50,7 +47,7 @@ class OfferService{
         return json_encode($arrId, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function updateOffers(){
+    public static function UpdateOffers(){
         set_time_limit(120);
         $offersToUpdate = json_decode(file_get_contents('php://input'));
         $el = new CIBlockElement();
@@ -72,7 +69,7 @@ class OfferService{
         }
     }
 
-    public static function deleteOffers(){
+    public static function DeleteOffers(){
         set_time_limit(120);
         $request = file_get_contents('php://input');
         $deleteData = json_decode($request);
@@ -104,4 +101,3 @@ class OfferService{
         return $arrOffers;
     }
 }
-?>
