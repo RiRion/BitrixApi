@@ -3,6 +3,7 @@
 namespace Services;
 
 use Mapping\VendorMap;
+use Models\Vendor;
 
  class VendorService
  {
@@ -31,7 +32,8 @@ use Mapping\VendorMap;
      public static function AddVendorsRange()
      {
          set_time_limit(120);
-         $vendors = json_decode(file_get_contents('php://input'));
+         $data = json_decode(file_get_contents('php://input'));
+         $vendors = self::CastToVendorAto($data);
          $el = new \CIBlockElement();
          foreach ($vendors as $vendor) {
              $bitrixElement = VendorMap::MapToBitrixElementFromVendor($vendor);
@@ -46,5 +48,18 @@ use Mapping\VendorMap;
          $vendorsId = json_decode(file_get_contents('php://input'));
          foreach ($vendorsId as $id) \CIBlockElement::Delete($id);
          unset($id);
+     }
+
+     private static function CastToVendorAto($arr){
+         $arrVendors = array();
+         foreach ($arr as $obj){
+             $vendor = new Vendor();
+             foreach ($obj as $key => $value)
+             {
+                 $vendor->$key = $value;
+             }
+             $arrVendors[] = $vendor;
+         }
+         return $arrVendors;
      }
  }

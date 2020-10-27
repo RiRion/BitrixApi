@@ -44,7 +44,7 @@ $app->get('/GetVendors', function (Request $request, Response $response, $args) 
     return $response;
 });
 
-$app->post("/AddVendorsRange", function (Request $request, Response $response, $args){
+$app->post("/AddVendors", function (Request $request, Response $response, $args){
     GetPostWithoutResponse($request, $response, VendorService::AddVendorsRange());
     return $response;
 });

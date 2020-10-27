@@ -34,6 +34,7 @@ class VendorMap
     public static function MapToBitrixElementFromVendor(Vendor $vendor)
     {
         return array(
+            "IBLOCK_ID" => 1,
             "XML_ID" => $vendor->VendorId,
             "NAME" => $vendor->Title,
             "DETAIL_TEXT" => $vendor->Description,
