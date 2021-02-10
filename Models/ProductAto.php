@@ -25,7 +25,8 @@
         public $ImgStatus = "";
         public $IeId = "";
         public $VendorCountry = "";
-        public $NewAndBestseller = "";
+        public $Offers = "";
+        public $Sale = "";
 
         function __construct()
         {

@@ -27,14 +27,15 @@ class ProductMap
         $prod->InfoPrice = $arProperties["MORE_PROPERTIES"]["VALUE"][0];
         $prod->IeId = $arFields["ID"];
         $prod->VendorCountry = $arProperties["country"]["VALUE"] != null ? $arProperties["country"]["VALUE"] : "0";
-        $prod->NewAndBestseller = $arProperties["OFFERS"]["VALUE"][0] != null ? $arProperties["OFFERS"]["VALUE"][0] : "";
+        $prod->Offers = $arProperties["OFFERS"]["VALUE"][0] != null ? self::getIdArrayFromOfferProperty($arProperties["OFFERS"]["VALUE"]) : "";
 
         $prod->ImagesURL->Img1 = $arFields["DETAIL_PICTURE"] != null ? $arFields["DETAIL_PICTURE"] : "";
+        $prod->Sale = $arProperties["sale"]["VALUE"] != null ? $arProperties["sale"]["VALUE"] : "0";
 
         return $prod;
     }
 
-    public static function MapFromProductToBitrixElement($product){
+    public static function MapFromProductToBitrixElement(ProductAto $product){
         $arrImages = (array)$product->ImagesURL;
         $bitrixElement = array(
             "XML_ID" => $product->ProductId,
@@ -59,7 +60,9 @@ class ProductMap
                 "modelyear" => $product->ModelYear,
                 "MORE_PROPERTIES" => $product->InfoPrice,
                 "country" => $product->VendorCountry,
-                "OFFERS" => self::getOfferPropertyId($product->NewAndBestseller)
+                //"OFFERS" => self::getOfferPropertyId($product->NewAndBestseller)
+                "OFFERS" => $product->Offers,
+                "sale" => $product->Sale
             )
         );
         $arrMorePhoto = array();
@@ -84,11 +87,24 @@ class ProductMap
         return $imgId;
     }
 
+    private static function getIdArrayFromOfferProperty($item){
+        $result = array();
+        foreach ($item as $i){
+            $result[] = self::getOfferPropertyId($i);
+        }
+        return $result;
+    }
+
     private static function getOfferPropertyId($value){
         switch ($value) {
-            case "Хит продаж": return 1836;
             case "Новинка" : return 1834;
+            case "Распродажа" : return 1835;
+            case "Хит продаж": return 1836;
             case "Новинка Хит продаж" : return 1851;
+            case "Скидка 10%" : return 1847;
+            case "Скидка 20%" : return 1848;
+            case "Скидка 30%" : return 1849;
+            case "Скидка 40%" : return 1850;
             default : return "";
         }
     }
