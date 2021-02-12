@@ -12,6 +12,7 @@ include_once __DIR__ . '/Models/OfferAto.php';
 include_once __DIR__ . '/Models/ProductAto.php';
 include_once __DIR__ . '/Models/Vendor.php';
 include_once __DIR__ . '/Models/VendorIdWithInternalId.php';
+include_once __DIR__ . '/Models/ProductIds.php';
 
 // Services
 include_once __DIR__ . '/Services/VendorService.php';

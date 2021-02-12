@@ -1,7 +1,8 @@
 <?
 
     class ProductAto {
-        public $ProductId = "";
+        public $ProductIeId = "";
+        public $ProductExId = "";
         public $VendorId = "";
         public $VendorCode = "";
         public $Name = "";
@@ -23,7 +24,6 @@
         public $ModelYear = "";
         public $InfoPrice = "";
         public $ImgStatus = "";
-        public $IeId = "";
         public $VendorCountry = "";
         public $Offers = "";
         public $Sale = "";

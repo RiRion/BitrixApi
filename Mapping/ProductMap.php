@@ -8,7 +8,8 @@ class ProductMap
         $arFields = $bitrixElement->GetFields();
         $arProperties = $bitrixElement->GetProperties();
 
-        $prod->ProductId = $arFields["XML_ID"];
+        $prod->ProductIeId = $arFields["ID"];
+        $prod->ProductExId = $arFields["XML_ID"];
         $prod->VendorId = $arProperties["ATT_BRAND"]["VALUE"];
         $prod->VendorCode = $arProperties["CML2_ARTICLE"]["VALUE"];
         $prod->Name = $arFields["NAME"];
@@ -25,10 +26,8 @@ class ProductMap
         $prod->Volume = $arProperties["volume"]["VALUE"];
         $prod->ModelYear = $arProperties["modelyear"]["VALUE"];
         $prod->InfoPrice = $arProperties["MORE_PROPERTIES"]["VALUE"][0];
-        $prod->IeId = $arFields["ID"];
         $prod->VendorCountry = $arProperties["country"]["VALUE"] != null ? $arProperties["country"]["VALUE"] : "0";
         $prod->Offers = $arProperties["OFFERS"]["VALUE"][0] != null ? self::getIdArrayFromOfferProperty($arProperties["OFFERS"]["VALUE"]) : "";
-
         $prod->ImagesURL->Img1 = $arFields["DETAIL_PICTURE"] != null ? $arFields["DETAIL_PICTURE"] : "";
         $prod->Sale = $arProperties["sale"]["VALUE"] != null ? $arProperties["sale"]["VALUE"] : "0";
 
@@ -38,7 +37,7 @@ class ProductMap
     public static function MapFromProductToBitrixElement(ProductAto $product){
         $arrImages = (array)$product->ImagesURL;
         $bitrixElement = array(
-            "XML_ID" => $product->ProductId,
+            "XML_ID" => $product->ProductExId,
             "IBLOCK_ID" =>  "17",//$product->BlockId,
             "CODE" => self::getCode($product->Name),
             "IBLOCK_SECTION_ID" => $product->CategoryId,

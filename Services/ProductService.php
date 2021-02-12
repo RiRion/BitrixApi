@@ -1,5 +1,4 @@
 <?
-
 /**
  * Class ProductService
  */
@@ -23,7 +22,10 @@ class ProductService{
         while($ob = $res->GetNextElement())
         {
             $arFields = $ob->GetFields();
-            $arrResult[] = Array('ProductId' => $arFields["XML_ID"], 'IeId' => $arFields["ID"]);
+            $ids = new ProductIds();
+            $ids->ProductIeId = $arFields["ID"];
+            $ids->ProductExId = $arFields["XML_ID"];
+            $arrResult[] = $ids;
         }
         return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
     }
