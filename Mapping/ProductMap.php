@@ -34,7 +34,7 @@ class ProductMap
         return $prod;
     }
 
-    public static function MapFromProductToBitrixElement(ProductAto $product){
+    public static function MapFromProductToBitrixElement($product){
         $arrImages = (array)$product->ImagesURL;
         $bitrixElement = array(
             "XML_ID" => $product->ProductExId,

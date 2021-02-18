@@ -58,7 +58,7 @@ class ProductService{
             if ($id = $el->Add($elementForImport, false, true, false)) {
                 $arrId[] = $id;
             }
-            else $arrIdImportFalse[] = $item->ProductId;
+            else $arrIdImportFalse[] = $item->ProductExId;
 //            else echo $el->LAST_ERROR."\n";
         }
         unset($item);
@@ -80,7 +80,7 @@ class ProductService{
         $el = new CIBlockElement();
         foreach ($productsToUpdate as $product) {
             $bitrixElement = ProductMap::MapFromProductToBitrixElement($product);
-            $result = $el->Update($product->IeId, $bitrixElement);
+            $result = $el->Update($product->ProductIeId, $bitrixElement);
             if ($result) $successUpdateProducts[] = $bitrixElement["XML_ID"];
             else $failureUpdateProducts[] = $bitrixElement["XML_ID"];
         }
