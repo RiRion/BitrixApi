@@ -13,7 +13,7 @@ class ProductMap
         $prod->VendorId = $arProperties["ATT_BRAND"]["VALUE"];
         $prod->VendorCode = $arProperties["CML2_ARTICLE"]["VALUE"];
         $prod->Name = $arFields["NAME"];
-        $prod->Description = $arFields["DETAIL_TEXT"];
+        // $prod->Description = $arFields["DETAIL_TEXT"];
         $prod->Batteries = $arProperties["batteries"]["VALUE"];
         $prod->Pack = $arProperties["pack"]["VALUE"];
         $prod->Material = $arProperties["material"]["VALUE"];

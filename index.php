@@ -112,6 +112,13 @@ $app->post("/DeleteOffers", function (Request $request, Response $response, $arg
     return $response;
 });
 
+// Tests ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$app->get("/Test", function (Request $request, Response $response, $args){
+    $response->getBody()->write(ProductService::Test());
+    return $response;
+});
+
 // Functions ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function PostAndPutObject(Request $request, Response $response, $func){

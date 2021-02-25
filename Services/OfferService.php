@@ -7,13 +7,16 @@ use \Bitrix\Catalog\Model\Price as ClassPrice;
  */
 class OfferService{
     public static function GetAllOffers(){
-        set_time_limit(120);
+        set_time_limit(240);
         $arrOffers = array();
         $arrFilter = array("IBLOCK_ID" => 22);
         $res = CIBlockElement::GetList(array(), $arrFilter, false, false, array());
+        $i = 0;
         while($ob = $res->GetNextElement())
         {
+            if ($i > 15000) break;
             $arrOffers[] = OfferMap::mapToOfferAtoFromBitrixElement($ob);
+            $i++;
         }
 
         return json_encode($arrOffers, JSON_UNESCAPED_UNICODE);

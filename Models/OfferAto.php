@@ -3,7 +3,8 @@
 
 class OfferAto{
     public $Id = ""; // offer ID
-    public $ProductIeId = ""; // prodid -> CML2_LINK (Property)
+    public $ProductIeId = "";
+    public $ProductExId = ""; // prodid -> CML2_LINK (Property)
     public $XmlId = ""; // sku -> B_IBLOCK_ELEMENT.XML_ID
     public $Barcode = ""; // barcode -> barcode (Property)
     public $Name = ""; // name -> B_IBLOCK_ELEMENT.NAME

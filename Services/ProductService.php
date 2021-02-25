@@ -3,6 +3,12 @@
  * Class ProductService
  */
 class ProductService{
+    public static function Test(){
+        print_r(self::GetProductExIdByIeId(337730));
+
+        return "";
+    }
+
     public static function GetAllProducts()
     {
         $arrProducts = array();
@@ -13,6 +19,23 @@ class ProductService{
             $arrProducts[] = ProductMap::MapFromBitrixElementToProduct($ob);
         }
         return json_encode($arrProducts, JSON_UNESCAPED_UNICODE);
+    }
+
+    public static function GetProductExIdByIeId($ieId){
+        //$obj = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => 17, "ID" => $ieId), false, false, Array());
+        $obj = CIBlockElement::GetByID($ieId);
+        if($product = $obj->GetNextElement()){
+            $arFields = $product->GetFields();
+            return $arFields["XML_ID"];
+        }
+        return 0;
+    }
+
+    public static function GetProductIeIdByExId($exId){
+        $result = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => 17, "XML_ID" => $exId), false, false, Array());
+        $obj = $result->GetNextElement();
+        $arFields = $obj->GetFields();
+        return $arFields["ID"];
     }
 
     public static function GetProductIdWithIeId(){
