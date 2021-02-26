@@ -74,6 +74,21 @@ class ProductMap
         return $bitrixElement;
     }
 
+    public static function GetProductExIdByIeId($ieId){
+        //$obj = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => 17, "ID" => $ieId), false, false, Array());
+        $obj = CIBlockElement::GetByID($ieId);
+        if($product = $obj->GetNextElement()){
+            $arFields = $product->GetFields();
+            return $arFields["XML_ID"];
+        }
+        return 0;
+    }
+
+    public static function GetProductIeIdByExId($exId){
+        return CommonService::GetIeIdByProvidedExId(17, $exId);
+    }
+
+
     private static function getCode($str){
         return CUtil::translit($str, "ru");
     }

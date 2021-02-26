@@ -2,17 +2,17 @@
     include_once "my_tools/Models/Offer.php";
 
     class OfferMap{
-        public static function mapToOfferAtoFromBitrixElement($bitrixElement){
+        public static function MapToOfferAtoFromBitrixElement($bitrixElement){
             $offer = new OfferAto();
 
             $arrFields = $bitrixElement->GetFields();
             $arrProperties = $bitrixElement->GetProperties();
-            $arrPrice = self::getCPriceByProductId($arrFields["ID"]);
+            $arrPrice = self::GetCPriceByProductId($arrFields["ID"]);
             $arrProduct = CCatalogProduct::GetByID($arrFields["ID"]);
 
             $offer->Id = $arrFields["ID"];
             $offer->Name = $arrFields["NAME"];
-            $offer->XmlId = $arrFields["EXTERNAL_ID"];
+            $offer->XmlId = $arrFields["XML_ID"];
 
             $offer->Barcode = $arrProperties["barcode"]["VALUE"];
             $offer->ProductIeId = $arrProperties["CML2_LINK"]["VALUE"] != null ? $arrProperties["CML2_LINK"]["VALUE"] : "0";
@@ -34,7 +34,7 @@
             return $offer;
         }
 
-        public static function mapToBitrixElementFromOfferAto(OfferAto $offerAto){
+        public static function MapToBitrixElementFromOfferAto(OfferAto $offerAto){
             $bitrixElement = array(
                 "IBLOCK_ID" => 22,
                 "XML_ID" => $offerAto->XmlId,
@@ -42,9 +42,10 @@
                 "NAME" => $offerAto->Name,
                 "CODE" => CUtil::translit($offerAto->Name, "ru", array("replace_space"=>"-","replace_other"=>"-")),
                 "PROPERTY_VALUES" => array(
+                    "sku" => $offerAto->XmlId,
                     "prodid" => $offerAto->ProductExId,
                     "barcode" => $offerAto->Barcode,
-                    "CML2_LINK" => ProductService::GetProductIeIdByExId($offerAto->ProductExId),
+                    "CML2_LINK" => ProductMap::GetProductIeIdByExId($offerAto->ProductExId),
                     "shippingdate" => $offerAto->ShippingDate,
                     "COLOR" => $offerAto->Color,
                     "SIZE" => $offerAto->Size,
@@ -57,7 +58,7 @@
             return $bitrixElement;
         }
 
-        public static function mapToCatalogProduct(OfferAto $offerAto, $offerId){
+        public static function MapToCatalogProduct(OfferAto $offerAto, $offerId){
             return array(
                 "ID" => $offerId,
                 "QUANTITY" => $offerAto->Quantity,
@@ -67,7 +68,7 @@
             );
         }
 
-        public static function mapToCatalogPrice(OfferAto $offerAto, $offerId){
+        public static function MapToCatalogPrice(OfferAto $offerAto, $offerId){
             return array(
                 "CURRENCY" => $offerAto->Currency,
                 "PRICE" => $offerAto->Price,
@@ -76,7 +77,11 @@
             );
         }
 
-        private static function getCPriceByProductId($productId){
+        public static function GetOfferIeIdByExId($exId){
+            return CommonService::GetIeIdByProvidedExId(22, $exId);
+        }
+
+        private static function GetCPriceByProductId($productId){
             $arrFilter = array("ID", "CURRENCY", "PRICE");
             $priceResultObj =  CPrice::GetListEx(array(), array("PRODUCT_ID" => $productId), false, false, $arrFilter);
             return $priceResultObj->Fetch();

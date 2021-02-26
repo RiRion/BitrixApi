@@ -117,9 +117,24 @@ $app->post("/AddOffersRange", function (Request $request, Response $response, $a
     else return $response->withStatus(403);
 });
 
+$app->post("/UpdateOffer", function (Request $request, Response $response, $args){
+    if(CheckHeaderRequest($request, $response)){
+        $obj = json_decode(file_get_contents('php://input'));
+        $result = OfferService::UpdateOffer($obj);
+        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
+        return $response;
+    }
+    else $response->withStatus(403);
+});
+
 $app->post("/UpdateOffers", function (Request $request, Response $response, $args){
-    CheckHeaderRequest($request, $response, OfferService::UpdateOffers());
-    return $response;
+    if(CheckHeaderRequest($request, $response)){
+        $arrObj = json_decode(file_get_contents('php://input'));
+        $result = OfferService::UpdateOfferRange($arrObj);
+        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
+        return $response;
+    }
+    else $response->withStatus(403);
 });
 
 $app->post("/DeleteOffers", function (Request $request, Response $response, $args){
@@ -130,7 +145,7 @@ $app->post("/DeleteOffers", function (Request $request, Response $response, $arg
 // Tests ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 $app->get("/Test", function (Request $request, Response $response, $args){
-    $response->getBody()->write(ProductService::Test());
+    $response->getBody()->write(OfferMap::GetOfferIeIdByExId(61));
     return $response;
 });
 

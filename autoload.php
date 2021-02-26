@@ -14,9 +14,10 @@ include_once __DIR__ . '/Models/Vendor.php';
 include_once __DIR__ . '/Models/VendorIdWithInternalId.php';
 include_once __DIR__ . '/Models/ProductIds.php';
 
-include_once __DIR__ . '/Models/ResponseModels/AddResponse.php';
+include_once __DIR__ . '/Models/ResponseModels/ApiResponse.php';
 
 // Services
 include_once __DIR__ . '/Services/VendorService.php';
 include_once __DIR__ . '/Services/ProductService.php';
 include_once __DIR__ . '/Services/OfferService.php';
+include_once __DIR__ . '/Services/CommonService.php';
