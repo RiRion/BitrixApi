@@ -98,48 +98,27 @@ $app->get("/GetAllOffers", function (Request $request, Response $response, $args
 });
 
 $app->post("/AddOffer", function (Request $request, Response $response, $args) {
-    if(CheckHeaderRequest($request, $response)){
-        $obj = json_decode(file_get_contents('php://input'));
-        $result = OfferService::AddOffer($obj);
-        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
-        return $response;
-    }
-    else $response->withStatus(403);
+    return RetrieveMessage($request, $response, 'OfferService::AddOffer');
 });
 
 $app->post("/AddOffersRange", function (Request $request, Response $response, $args){
-    if(CheckHeaderRequest($request, $response)){
-        $objs = json_decode(file_get_contents('php://input'));
-        $result = OfferService::AddOffersRange($objs);
-        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
-        return $response;
-    }
-    else return $response->withStatus(403);
+    return RetrieveMessage($request, $response, 'OfferService::AddOffersRange');
 });
 
 $app->post("/UpdateOffer", function (Request $request, Response $response, $args){
-    if(CheckHeaderRequest($request, $response)){
-        $obj = json_decode(file_get_contents('php://input'));
-        $result = OfferService::UpdateOffer($obj);
-        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
-        return $response;
-    }
-    else $response->withStatus(403);
+    return RetrieveMessage($request, $response, 'OfferService::UpdateOffer');
 });
 
 $app->post("/UpdateOffers", function (Request $request, Response $response, $args){
-    if(CheckHeaderRequest($request, $response)){
-        $arrObj = json_decode(file_get_contents('php://input'));
-        $result = OfferService::UpdateOfferRange($arrObj);
-        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
-        return $response;
-    }
-    else $response->withStatus(403);
+    return RetrieveMessage($request, $response, 'OfferService::UpdateOfferRange');
+});
+
+$app->post("/DeleteOffer", function (Request $request, Response $response, $args){
+    return RetrieveMessage($request, $response, 'OfferService::DeleteOffer');
 });
 
 $app->post("/DeleteOffers", function (Request $request, Response $response, $args){
-    CheckHeaderRequest($request, $response, OfferService::DeleteOffers());
-    return $response;
+    return RetrieveMessage($request, $response, 'OfferService::DeleteOfferRange');
 });
 
 // Tests ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,6 +129,16 @@ $app->get("/Test", function (Request $request, Response $response, $args){
 });
 
 // Functions ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function RetrieveMessage(Request $request, Response $response, $func){
+    if(CheckHeaderRequest($request, $response)){
+        $obj = json_decode(file_get_contents('php://input'));
+        $result = $func($obj);
+        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
+        return $response;
+    }
+    else $response->withStatus(403);
+}
 
 function CheckHeaderRequest(Request $request, Response $response){
     $contentType = $request->getHeaderLine("Content-Type");

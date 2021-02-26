@@ -70,10 +70,10 @@ class OfferService{
             else ClassProduct::update($offerId, $catalogProduct);
             ClassPrice::update(self::GetCPriceIdByOfferId($offerId), $catalogPrice);
 
-            $response->Status = true;
+            $response->Status = 1;
         }
         else {
-            $response->Status = false;
+            $response->Status = -1;
             $response->ErrorMessage = $el->LAST_ERROR;
         }
         return $response;
@@ -87,16 +87,27 @@ class OfferService{
         return $response;
     }
 
-    public static function DeleteOffers(){
-        set_time_limit(120);
-        $request = file_get_contents('php://input');
-        $deleteData = json_decode($request);
-        foreach ($deleteData as $id){
-            $price = self::GetCPriceIdByOfferId($id);
-            CPrice::Delete($price);
-            CCatalogProduct::Delete($id);
-            CIBlockElement::Delete($id);
+    public static function  DeleteOffer($exId){
+        $response = new ApiResponse();
+        $response->ObjectType = "Offer";
+        $response->Method = "Delete";
+        $response->ExId = $exId;
+
+        $id = OfferMap::GetOfferIeIdByExId($exId);
+        $price = self::GetCPriceIdByOfferId($id);
+        CPrice::Delete($price);
+        CCatalogProduct::Delete($id);
+        if(CIBlockElement::Delete($id)) $response->Status = 1;
+        else $response->Status = -1;
+        return $response;
+    }
+
+    public static function DeleteOfferRange($exIdList){
+        $response = array();
+        foreach ($exIdList as $id){
+            $response[] = self::DeleteOffer($id);
         }
+        return $response;
     }
 
     private static function GetCPriceIdByOfferId($offerId){
