@@ -16,7 +16,7 @@
 
             $offer->Barcode = $arrProperties["barcode"]["VALUE"];
             $offer->ProductIeId = $arrProperties["CML2_LINK"]["VALUE"] != null ? $arrProperties["CML2_LINK"]["VALUE"] : "0";
-            $offer->ProductExId =  ProductService::GetProductExIdByIeId($offer->ProductIeId);
+            $offer->ProductExId =  $arrProperties["prodid"]["VALUE"];
             $offer->ShippingDate = $arrProperties["shippingdate"]["VALUE"];
             $offer->Color = $arrProperties["COLOR"]["VALUE"];
             $offer->Size = $arrProperties["SIZE"]["VALUE"];
@@ -42,6 +42,7 @@
                 "NAME" => $offerAto->Name,
                 "CODE" => CUtil::translit($offerAto->Name, "ru", array("replace_space"=>"-","replace_other"=>"-")),
                 "PROPERTY_VALUES" => array(
+                    "prodid" => $offerAto->ProductExId,
                     "barcode" => $offerAto->Barcode,
                     "CML2_LINK" => ProductService::GetProductIeIdByExId($offerAto->ProductExId),
                     "shippingdate" => $offerAto->ShippingDate,

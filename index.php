@@ -45,12 +45,12 @@ $app->get('/GetVendors', function (Request $request, Response $response, $args) 
 });
 
 $app->post("/AddVendors", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, VendorService::AddVendorsRange());
+    CheckHeaderRequest($request, $response, VendorService::AddVendorsRange());
     return $response;
 });
 
 $app->post("/DeleteVendors", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, VendorService::DeleteVendors());
+    CheckHeaderRequest($request, $response, VendorService::DeleteVendors());
     return $response;
 });
 
@@ -76,17 +76,17 @@ $app->get("/GetCategories", function (Request $request, Response $response, $arg
 
 //Adds products to the database.
 $app->post("/AddProductsRange", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, ProductService::AddProductsRange());
+    CheckHeaderRequest($request, $response, ProductService::AddProductsRange());
     return $response;
 });
 
 $app->post("/UpdateProductsRange", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, ProductService::UpdateProductsRange());
+    CheckHeaderRequest($request, $response, ProductService::UpdateProductsRange());
     return $response;
 });
 
 $app->post("/DeleteProductsRange", function (Request $request, Response $response, $args){
-   GetPostWithoutResponse($request, $response, ProductService::DeleteProductsRange());
+   CheckHeaderRequest($request, $response, ProductService::DeleteProductsRange());
    return $response;
 });
 
@@ -97,18 +97,33 @@ $app->get("/GetAllOffers", function (Request $request, Response $response, $args
     return $response;
 });
 
+$app->post("/AddOffer", function (Request $request, Response $response, $args) {
+    if(CheckHeaderRequest($request, $response)){
+        $obj = json_decode(file_get_contents('php://input'));
+        $result = OfferService::AddOffer($obj);
+        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
+        return $response;
+    }
+    else $response->withStatus(403);
+});
+
 $app->post("/AddOffersRange", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, OfferService::AddOffersRange());
-    return $response;
+    if(CheckHeaderRequest($request, $response)){
+        $objs = json_decode(file_get_contents('php://input'));
+        $result = OfferService::AddOffersRange($objs);
+        $response->getBody()->write(json_encode($result), JSON_UNESCAPED_UNICODE);
+        return $response;
+    }
+    else return $response->withStatus(403);
 });
 
 $app->post("/UpdateOffers", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, OfferService::UpdateOffers());
+    CheckHeaderRequest($request, $response, OfferService::UpdateOffers());
     return $response;
 });
 
 $app->post("/DeleteOffers", function (Request $request, Response $response, $args){
-    GetPostWithoutResponse($request, $response, OfferService::DeleteOffers());
+    CheckHeaderRequest($request, $response, OfferService::DeleteOffers());
     return $response;
 });
 
@@ -121,24 +136,10 @@ $app->get("/Test", function (Request $request, Response $response, $args){
 
 // Functions ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function PostAndPutObject(Request $request, Response $response, $func){
+function CheckHeaderRequest(Request $request, Response $response){
     $contentType = $request->getHeaderLine("Content-Type");
-    if (strstr($contentType, "application/json")){
-        $response->getBody()->write($func);
-    }
-    else{
-        $response->withStatus(400);
-    }
-}
-
-function GetPostWithoutResponse(Request $request, Response $response, $func){
-    $contentType = $request->getHeaderLine("Content-Type");
-    if (!strstr($contentType, "application/json")){
-        $func;
-    }
-    else{
-        $response->withStatus(400);
-    }
+    if (strstr($contentType, "application/json")) return true;
+    else return false;
 }
 
 // Run /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

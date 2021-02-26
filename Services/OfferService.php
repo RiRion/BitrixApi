@@ -11,50 +11,51 @@ class OfferService{
         $arrOffers = array();
         $arrFilter = array("IBLOCK_ID" => 22);
         $res = CIBlockElement::GetList(array(), $arrFilter, false, false, array());
-        $i = 0;
         while($ob = $res->GetNextElement())
         {
-            if ($i > 15000) break;
             $arrOffers[] = OfferMap::mapToOfferAtoFromBitrixElement($ob);
-            $i++;
         }
 
         return json_encode($arrOffers, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function AddOffersRange(){
-        set_time_limit(120);
-        $listToUpdate = json_decode(file_get_contents('php://input'));
+    public static function AddOffer($obj){
+        $response = new AddResponse();
         $el = new CIBlockElement();
-        $arrId = array();
-        $offers = self::castToOfferAto($listToUpdate);
-        foreach ($offers as $offerAto) {
-            $bitrixOffer = OfferMap::mapToBitrixElementFromOfferAto($offerAto);
-            if ($offerId = $el->Add($bitrixOffer, false, true, false)){
-                $catalogProduct = OfferMap::mapToCatalogProduct($offerAto, $offerId);
-                $catalogPrice = OfferMap::mapToCatalogPrice($offerAto, $offerId);
-
-//                $catalogProductId = CCatalogProduct::Add($catalogProduct); // Рабочий, но устаревший метод (по документации).
-                ClassProduct::add($catalogProduct); // Works faster.
-//                $catalogPriceId = CPrice::Add($catalogPrice); // Рабочий, но устаревший метод (по документации).
-                ClassPrice::add($catalogPrice); // Works faster.
-                // Новые методы ничего не возвращают - проверить их результат не представляется возможным.
-            }
-
-            $arrId[] = array(
-                "ProductId" => $offerAto->ProductId,
-                "XmlId" => $offerAto->XmlId,
-                "OfferId" => $offerId == false ? 0 : $offerId
-            );
+        $offer = self::castToOfferAto($obj);
+        $response->ObjectType = "Offer";
+        $response->ExId = $offer->XmlId;
+        $bitrixEl = OfferMap::mapToBitrixElementFromOfferAto($offer);
+        if ($offerId = $el->Add($bitrixEl, false, true, false)){
+            $catalogProduct = OfferMap::mapToCatalogProduct($offer, $offerId);
+            $catalogPrice = OfferMap::mapToCatalogPrice($offer, $offerId);
+            // $catalogProductId = CCatalogProduct::Add($catalogProduct); // Рабочий, но устаревший метод (по документации).
+            ClassProduct::add($catalogProduct); // Works faster.
+            // $catalogPriceId = CPrice::Add($catalogPrice); // Рабочий, но устаревший метод (по документации).
+            ClassPrice::add($catalogPrice); // Works faster.
+            // Новые методы ничего не возвращают - проверить их результат не представляется возможным.
+            $response->Status = $offerId;
         }
-        return json_encode($arrId, JSON_UNESCAPED_UNICODE);
+        else {
+            $response->Status = -1;
+            $response->ErrorMessage = $el->LAST_ERROR;
+        }
+        return $response;
+    }
+
+    public static function AddOffersRange($objs){
+        $response = array();
+        foreach ($objs as $offer) {
+            $response[] = self::AddOffer($offer);
+        }
+        return $response;
     }
 
     public static function UpdateOffers(){
         set_time_limit(120);
         $offersToUpdate = json_decode(file_get_contents('php://input'));
         $el = new CIBlockElement();
-        $offers = self::castToOfferAto($offersToUpdate);
+        $offers = self::castToListOfferAto($offersToUpdate);
         foreach ($offers as $offerAto) {
             $offerId = $offerAto->Id;
             $bitrixElement = OfferMap::mapToBitrixElementFromOfferAto($offerAto);
@@ -91,14 +92,18 @@ class OfferService{
         return $arr["ID"];
     }
 
-    private static function castToOfferAto($arr){
+    private static function castToOfferAto($obj){
+        $offer = new OfferAto();
+        foreach ($obj as $key => $value) {
+            $offer->$key =  $value;
+        }
+        return $offer;
+    }
+
+    private static function castToListOfferAto($arr){
         $arrOffers = array();
         foreach ($arr as $obj){
-            $offer = new OfferAto();
-            foreach ($obj as $key => $value)
-            {
-                $offer->$key = $value;
-            }
+            $offer = self::castToOfferAto($obj);
             $arrOffers[] = $offer;
         }
         return $arrOffers;
