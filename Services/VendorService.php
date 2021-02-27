@@ -29,36 +29,65 @@ use Models\Vendor;
          return json_encode($vendors, JSON_UNESCAPED_UNICODE);
      }
 
-     public static function AddVendorsRange()
-     {
-         set_time_limit(120);
-         $data = json_decode(file_get_contents('php://input'));
-         $vendors = self::CastToVendorAto($data);
+     public static function AddVendor($obj){
+         $response = new \ApiResponse();
+         $response->ObjectType = "Vendor";
+         $response->Method = "Add";
+         $vendor = self::CastToVendorAto($obj);
          $el = new \CIBlockElement();
-         foreach ($vendors as $vendor) {
-             $bitrixElement = VendorMap::MapToBitrixElementFromVendor($vendor);
-             $el->Add($bitrixElement, false, true, false);
+         $bitrixElement = VendorMap::MapToBitrixElementFromVendor($vendor);
+         if ($vendorId = $el->Add($bitrixElement, false, true, false)){
+             $response->Status = $vendorId;
          }
-         unset($vendor);
+         else {
+             $response->Status = -1;
+             $response->ErrorMessage = $el->LAST_ERROR;
+         }
+         return $response;
      }
 
-     public static function DeleteVendors()
+     public static function AddVendorsRange($arrObj)
      {
-         set_time_limit(120);
-         $vendorsId = json_decode(file_get_contents('php://input'));
-         foreach ($vendorsId as $id) \CIBlockElement::Delete($id);
-         unset($id);
+         $result = array();
+         foreach ($arrObj as $vendor){
+             $result[] = self::AddVendor($vendor);
+         }
+         return $result;
      }
 
-     private static function CastToVendorAto($arr){
+     public static function DeleteVendor($id){
+         $response = new \ApiResponse();
+         $response->ObjectType = "Vendor";
+         $response->Method = "Delete";
+         $response->ExId = $id;
+
+         if(\CIBlockElement::Delete($id)) $response->Status = 1;
+         else $response->Status = -1;
+         return $response;
+     }
+
+     public static function DeleteVendorsRange($arrId)
+     {
+         $result = array();
+         foreach ($arrId as $id) {
+             $result[] = self::DeleteVendor($id);
+         }
+         return $result;
+     }
+
+     private static function CastToVendorAto($obj){
+         $vendor = new Vendor();
+         foreach ($obj as $key => $value)
+         {
+             $vendor->$key = $value;
+         }
+         return $vendor;
+     }
+
+     private static function CastToVendorAtoRange($arr){
          $arrVendors = array();
          foreach ($arr as $obj){
-             $vendor = new Vendor();
-             foreach ($obj as $key => $value)
-             {
-                 $vendor->$key = $value;
-             }
-             $arrVendors[] = $vendor;
+             $arrVendors[] = self::CastToVendorAto($obj);
          }
          return $arrVendors;
      }

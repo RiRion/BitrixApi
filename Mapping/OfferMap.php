@@ -16,7 +16,7 @@
 
             $offer->Barcode = $arrProperties["barcode"]["VALUE"];
             $offer->ProductIeId = $arrProperties["CML2_LINK"]["VALUE"] != null ? $arrProperties["CML2_LINK"]["VALUE"] : "0";
-            $offer->ProductExId =  $arrProperties["prodid"]["VALUE"];
+            $offer->ProductExId =  $arrProperties["prodid"]["VALUE"] != null ? $arrProperties["prodid"]["VALUE"] : "0";
             $offer->ShippingDate = $arrProperties["shippingdate"]["VALUE"];
             $offer->Color = $arrProperties["COLOR"]["VALUE"];
             $offer->Size = $arrProperties["SIZE"]["VALUE"];

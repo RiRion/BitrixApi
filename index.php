@@ -44,14 +44,20 @@ $app->get('/GetVendors', function (Request $request, Response $response, $args) 
     return $response;
 });
 
-$app->post("/AddVendors", function (Request $request, Response $response, $args){
-    CheckHeaderRequest($request, $response, VendorService::AddVendorsRange());
-    return $response;
+$app->post("/AddVendor", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'VendorService::AddVendor');
 });
 
-$app->post("/DeleteVendors", function (Request $request, Response $response, $args){
-    CheckHeaderRequest($request, $response, VendorService::DeleteVendors());
-    return $response;
+$app->post("/AddVendors", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'VendorService::AddVendorsRange');
+});
+
+$app->post("/DeleteVendor", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'VendorService::DeleteVendor');
+});
+
+$app->post("/DeleteVendorsRange", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'VendorService::DeleteVendorsRange');
 });
 
 // PRODUCTS ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -74,10 +80,16 @@ $app->get("/GetCategories", function (Request $request, Response $response, $arg
     return $response;
 });
 
-//Adds products to the database.
+$app->post("/AddProduct", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'ProductService::AddProduct');
+});
+
 $app->post("/AddProductsRange", function (Request $request, Response $response, $args){
-    CheckHeaderRequest($request, $response, ProductService::AddProductsRange());
-    return $response;
+    return RetrieveMessage($request, $response, 'ProductService::AddProductsRange');
+});
+
+$app->post("/UpdateProduct", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'ProductService::AddProduct');
 });
 
 $app->post("/UpdateProductsRange", function (Request $request, Response $response, $args){
@@ -85,9 +97,12 @@ $app->post("/UpdateProductsRange", function (Request $request, Response $respons
     return $response;
 });
 
+$app->post("/DeleteProduct", function (Request $request, Response $response, $args) {
+    return RetrieveMessage($request, $response, 'ProductService::DeleteProduct');
+});
+
 $app->post("/DeleteProductsRange", function (Request $request, Response $response, $args){
-   CheckHeaderRequest($request, $response, ProductService::DeleteProductsRange());
-   return $response;
+    return RetrieveMessage($request, $response, 'ProductService::DeleteProductsRange');
 });
 
 // OFFERS //////////////////////////////////////////////////////////////////////////////////////////////////////////////

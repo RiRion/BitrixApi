@@ -2,6 +2,9 @@
 /**
  * Class ProductService
  */
+
+//        https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php - CIBlockElement::Add
+//        https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php - CSearch::ReIndexAll
 class ProductService{
     public static function Test(){
         print_r(self::GetProductExIdByIeId(337730));
@@ -50,78 +53,86 @@ class ProductService{
         return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
     }
 
-    public static function AddProductsRange()
-    {
-        set_time_limit(120);
-//        https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php - CIBlockElement::Add
-//        https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php - CSearch::ReIndexAll
-        $arNewProducts = json_decode(file_get_contents('php://input'));
-        $arrId = array();
-        $arrIdImportFalse = array();
+    public static function AddProduct($obj){
+        $productAto = self::CastToProductAto($obj);
         $el = new CIBlockElement();
-        foreach ($arNewProducts as $item) {
-            $elementForImport = ProductMap::MapFromProductToBitrixElement($item);
-            if ($id = $el->Add($elementForImport, false, true, false)) {
-                $arrId[] = $id;
-            }
-            else $arrIdImportFalse[] = $item->ProductExId;
-//            else echo $el->LAST_ERROR."\n";
+        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto);
+        $response = new ApiResponse();
+        $response->ObjectType = "Product";
+        $response->Method = "Add";
+        $response->ExId = $productAto->ProductExId;
+        if ($productId = $el->Add($productBitrix, false, true, false)){
+            $response->Status = $productId;
         }
-        unset($item);
-
-        $response = array(
-            "arrId" => $arrId,
-            "arrIdImportFalse" => $arrIdImportFalse,
-            "arrIdCount" => count($arrId)
-        );
-        return json_encode($response, JSON_UNESCAPED_UNICODE);
+        else {
+            $response->Status = -1;
+            $response->ErrorMessage = $el->LAST_ERROR;
+        }
+        return $response;
     }
 
-    public static function UpdateProductsRange()
+    public static function AddProductsRange($arrObj)
     {
-        set_time_limit(120);
-        $productsToUpdate = json_decode(file_get_contents('php://input'));
-        $successUpdateProducts = array();
-        $failureUpdateProducts = array();
-        $el = new CIBlockElement();
-        foreach ($productsToUpdate as $product) {
-            $bitrixElement = ProductMap::MapFromProductToBitrixElement($product);
-            $result = $el->Update($product->ProductIeId, $bitrixElement);
-            if ($result) $successUpdateProducts[] = $bitrixElement["XML_ID"];
-            else $failureUpdateProducts[] = $bitrixElement["XML_ID"];
+        $result = array();
+        foreach ($arrObj as $product){
+            $result[] = self::AddProduct($product);
         }
-
-        $response  = array(
-            "success" => $successUpdateProducts,
-            "failure" => $failureUpdateProducts
-        );
-
-        return json_encode($response, JSON_UNESCAPED_UNICODE);
+        return $result;
     }
 
-    public static function DeleteProductsRange()
-    {
-        set_time_limit(120);
-        $request = file_get_contents('php://input');
-        $deleteData = json_decode($request);
-        $file = fopen('deleteLog.txt', 'a+');
-        $arrResult = array();
-
-        foreach ($deleteData as $value) {
-            if (!CIBlockElement::Delete($value)) {
-                $mes = "Error";
-            }else {
-                $mes = "Success";
-            }
-            fwrite($file, "DELETE: ".$mes." ID: ".$value." ".date("d.m.Y H:i:s").".\n" );
-            $arrResult[] = array(
-                "Id" => (int)$value,
-                "Status" => $mes
-            );
+    public static function UpdateProduct($obj){
+        $productAto = self::CastToProductAto($obj);
+        $productAto->ProductIeId = ProductMap::GetProductIeIdByExId($productAto->ProductExId);
+        $el = new CIBlockElement();
+        $response = new ApiResponse();
+        $response->ObjectType = "Offer";
+        $response->Method = "Update";
+        $response->ExId = $productAto->ProductExId;
+        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto);
+        if ($el->Update($productAto->ProductIeId, $productBitrix)){
+            $response->Status = 1;
         }
-        unset($value);
-        fwrite($file, "\n");
-        fclose($file);
-        return json_encode($arrResult, JSON_UNESCAPED_UNICODE);
+        else {
+            $response->Status = -1;
+            $response->ErrorMessage = $el->LAST_ERROR;
+        }
+        return $response;
+    }
+
+    public static function UpdateProductsRange($arrObj)
+    {
+        $result = array();
+        foreach ($arrObj as $obj){
+            $result[] = self::UpdateProduct($obj);
+        }
+        return $result;
+    }
+
+    public static function DeleteProduct($exId){
+        $response = new ApiResponse();
+        $response->ObjectType = "Product";
+        $response->Method = "Delete";
+        $response->ExId = $exId;
+        $ieId = ProductMap::GetProductIeIdByExId($exId);
+        if(CIBlockElement::Delete($ieId)) $response->Status = 1;
+        else $response->Status = -1;
+        return $response;
+    }
+
+    public static function DeleteProductsRange($arrObj)
+    {
+        $result = array();
+        foreach ($arrObj as $exId){
+            $result[] = self::DeleteProduct($exId);
+        }
+        return $result;
+    }
+
+    private static function CastToProductAto($obj){
+        $product = new ProductAto();
+        foreach ($obj as $key => $value) {
+            $product->$key =  $value;
+        }
+        return $product;
     }
 }

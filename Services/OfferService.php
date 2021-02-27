@@ -27,7 +27,11 @@ class OfferService{
         $response->Method = "Add";
         $response->ExId = $offer->XmlId;
         $bitrixEl = OfferMap::MapToBitrixElementFromOfferAto($offer);
-        if ($offerId = $el->Add($bitrixEl, false, true, false)){
+        if ($bitrixEl["PROPERTY_VALUES"]["CML2_LINK"] == -1){
+            $response->Status = -1;
+            $response->ErrorMessage = "Product with provided external ID ".$bitrixEl["PROPERTY_VALUES"]["prodid"]." not found.";
+        }
+        else if ($offerId = $el->Add($bitrixEl, false, true, false)){
             $catalogProduct = OfferMap::MapToCatalogProduct($offer, $offerId);
             $catalogPrice = OfferMap::MapToCatalogPrice($offer, $offerId);
             // $catalogProductId = CCatalogProduct::Add($catalogProduct); // Рабочий, но устаревший метод (по документации).
