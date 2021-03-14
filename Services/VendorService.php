@@ -1,15 +1,12 @@
 <?php
 
-namespace Services;
-
-use Mapping\VendorMap;
 use Models\Vendor;
 
  class VendorService
  {
      public static function GetVendorsId(){
          $arrVendors = array();
-         $res = \CIBlockElement::GetList(array(), array("IBLOCK_ID" => 1), false, false, array("ID", "XML_ID"));
+         $res = CIBlockElement::GetList(array(), array("IBLOCK_ID" => 1), false, false, array("ID", "XML_ID"));
          while($ob = $res->GetNextElement())
          {
              $arrVendors[] = VendorMap::MapToVendorIdWithInternalId($ob);
@@ -20,7 +17,7 @@ use Models\Vendor;
 
      public static function GetVendors(){
          $vendors = array();
-         $res = \CIBlockElement::GetList(array(), array("IBLOCK_ID" => 1), false, false, array());
+         $res = CIBlockElement::GetList(array(), array("IBLOCK_ID" => 1), false, false, array());
          while ($ob = $res->GetNextElement())
          {
              $vendors[] = VendorMap::MapToVendorFromBitrixElement($ob);
@@ -30,11 +27,12 @@ use Models\Vendor;
      }
 
      public static function AddVendor($obj){
-         $response = new \ApiResponse();
+         $response = new ApiResponse();
          $response->ObjectType = "Vendor";
          $response->Method = "Add";
          $vendor = self::CastToVendorAto($obj);
-         $el = new \CIBlockElement();
+         $response->ExId = $vendor->VendorId;
+         $el = new CIBlockElement();
          $bitrixElement = VendorMap::MapToBitrixElementFromVendor($vendor);
          if ($vendorId = $el->Add($bitrixElement, false, true, false)){
              $response->Status = $vendorId;
@@ -56,12 +54,12 @@ use Models\Vendor;
      }
 
      public static function DeleteVendor($id){
-         $response = new \ApiResponse();
+         $response = new ApiResponse();
          $response->ObjectType = "Vendor";
          $response->Method = "Delete";
          $response->ExId = $id;
 
-         if(\CIBlockElement::Delete($id)) $response->Status = 1;
+         if(CIBlockElement::Delete($id)) $response->Status = 1;
          else $response->Status = -1;
          return $response;
      }

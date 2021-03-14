@@ -1,7 +1,5 @@
 <?php
 
-namespace Mapping;
-
 use Models\Vendor;
 use Models\VendorIdWithInternalId;
 
@@ -44,5 +42,9 @@ class VendorMap
                 133 => $vendor->VendorId
             )
         );
+    }
+
+    public static function GetVendorIeIdByExId($exId){
+        return CommonService::GetIeIdByProvidedExId(1, $exId);
     }
 }

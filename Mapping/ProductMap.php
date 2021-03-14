@@ -10,7 +10,7 @@ class ProductMap
 
         $prod->ProductIeId = $arFields["ID"];
         $prod->ProductExId = $arFields["XML_ID"];
-        $prod->VendorId = $arProperties["ATT_BRAND"]["VALUE"];
+        $prod->VendorId = CommonService::GetExIdByIeId($arProperties["ATT_BRAND"]["VALUE"]);
         $prod->VendorCode = $arProperties["CML2_ARTICLE"]["VALUE"];
         $prod->Name = $arFields["NAME"];
         // $prod->Description = $arFields["DETAIL_TEXT"];
@@ -34,7 +34,7 @@ class ProductMap
         return $prod;
     }
 
-    public static function MapFromProductToBitrixElement(ProductAto $product){
+    public static function MapFromProductToBitrixElement(ProductAto $product, bool $makeFileArray){
         $arrImages = (array)$product->ImagesURL;
         $bitrixElement = array(
             "XML_ID" => $product->ProductExId,
@@ -42,10 +42,10 @@ class ProductMap
             "CODE" => self::getCode($product->Name),
             "IBLOCK_SECTION_ID" => $product->CategoryId,
             "NAME" => $product->Name,
-            "DETAIL_PICTURE" => CFile::MakeFileArray($arrImages["Img1"]),
+            "DETAIL_PICTURE" => $makeFileArray ? CFile::MakeFileArray($arrImages["Img1"]) : null,
             "DETAIL_TEXT" => $product->Description,
             "PROPERTY_VALUES" => array(
-                "ATT_BRAND" => $product->VendorId,
+                "ATT_BRAND" => VendorMap::GetVendorIeIdByExId($product->VendorId),
                 "CML2_ARTICLE" => $product->VendorCode,
                 "batteries" => $product->Batteries,
                 "pack" => $product->Pack,
@@ -64,24 +64,16 @@ class ProductMap
                 "sale" => $product->Sale
             )
         );
-        $arrMorePhoto = array();
-        unset($arrImages["Img1"]);
-        foreach ($arrImages as $value) {
-            if ($value != null && $value != "") $arrMorePhoto[] = self::getImageId($value);
+        if ($makeFileArray){
+            $arrMorePhoto = array();
+            unset($arrImages["Img1"]);
+            foreach ($arrImages as $value) {
+                if ($value != null && $value != "") $arrMorePhoto[] = self::getImageId($value);
+            }
+            if (count($arrMorePhoto) > 0) $bitrixElement["PROPERTY_VALUES"] += ["MORE_PHOTO" => $arrMorePhoto];
         }
-        if (count($arrMorePhoto) > 0) $bitrixElement["PROPERTY_VALUES"] += ["MORE_PHOTO" => $arrMorePhoto];
 
         return $bitrixElement;
-    }
-
-    public static function GetProductExIdByIeId($ieId){
-        //$obj = CIBlockElement::GetList(Array(), array("IBLOCK_ID" => 17, "ID" => $ieId), false, false, Array());
-        $obj = CIBlockElement::GetByID($ieId);
-        if($product = $obj->GetNextElement()){
-            $arFields = $product->GetFields();
-            return $arFields["XML_ID"];
-        }
-        return 0;
     }
 
     public static function GetProductIeIdByExId($exId){

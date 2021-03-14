@@ -9,8 +9,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
-use Services\VendorService;
-
 require __DIR__ .'/vendor/autoload.php';
 require ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 require __DIR__ .'/autoload.php';
@@ -89,7 +87,7 @@ $app->post("/AddProductsRange", function (Request $request, Response $response, 
 });
 
 $app->post("/UpdateProduct", function (Request $request, Response $response, $args) {
-    return RetrieveMessage($request, $response, 'ProductService::AddProduct');
+    return RetrieveMessage($request, $response, 'ProductService::UpdateProduct');
 });
 
 $app->post("/UpdateProductsRange", function (Request $request, Response $response, $args){
@@ -139,7 +137,7 @@ $app->post("/DeleteOffers", function (Request $request, Response $response, $arg
 // Tests ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 $app->get("/Test", function (Request $request, Response $response, $args){
-    $response->getBody()->write(OfferMap::GetOfferIeIdByExId(61));
+    $response->getBody()->write(ProductService::Test());
     return $response;
 });
 

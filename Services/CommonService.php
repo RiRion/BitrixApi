@@ -8,4 +8,13 @@ class CommonService{
         }
         else return -1;
     }
+
+    public static function GetExIdByIeId($ieId){
+        $obj = CIBlockElement::GetByID($ieId);
+        if($product = $obj->GetNextElement()){
+            $arFields = $product->GetFields();
+            return $arFields["XML_ID"];
+        }
+        return 0;
+    }
 }

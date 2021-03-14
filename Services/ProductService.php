@@ -7,9 +7,8 @@
 //        https://dev.1c-bitrix.ru/api_help/search/classes/csearch/reindexall.php - CSearch::ReIndexAll
 class ProductService{
     public static function Test(){
-        print_r(self::GetProductExIdByIeId(337730));
-
-        return "";
+        print_r(ProductMap::GetProductIeIdByExId(862));
+//        return $id;
     }
 
     public static function GetAllProducts()
@@ -56,7 +55,7 @@ class ProductService{
     public static function AddProduct($obj){
         $productAto = self::CastToProductAto($obj);
         $el = new CIBlockElement();
-        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto);
+        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto, true);
         $response = new ApiResponse();
         $response->ObjectType = "Product";
         $response->Method = "Add";
@@ -88,7 +87,7 @@ class ProductService{
         $response->ObjectType = "Offer";
         $response->Method = "Update";
         $response->ExId = $productAto->ProductExId;
-        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto);
+        $productBitrix = ProductMap::MapFromProductToBitrixElement($productAto, false);
         if ($el->Update($productAto->ProductIeId, $productBitrix)){
             $response->Status = 1;
         }
